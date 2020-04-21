@@ -1,26 +1,33 @@
 <template>
   <div id="app">
     <div class="app__container">
-
+      <AppLeftContainer/>
+      <AppRightContainer/>
     </div>
   </div>
 </template>
 
+<script>
+import AppLeftContainer from '@/components/AppLeftContainer'
+import AppRightContainer from '@/components/AppRightContainer'
+
+export default {
+  components: {AppLeftContainer, AppRightContainer}
+}
+</script>
+
 <style lang="scss">
+// @import url(./assets/scss/main.scss);
+
 body, html {
   margin: 0;
 }
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
 }
 
 .app__container {
@@ -29,5 +36,7 @@ body, html {
   height: 70vh;
   max-height: 800px;
   background-color: black;
+  display: flex;
+  box-shadow: 0 0 3px #0000002e;
 }
 </style>
