@@ -2,19 +2,19 @@
   <div class="add-list__popup">
     <input 
       class="input-default add-list__input"
-      :value="$store.state.newList.title"
-      @input="titleInput"
-      @keypress.enter="createList"
+      v-model="title"
+      @keypress.enter="createTodoList"
+      ref="title-input"
     >
     <ColorPalette 
       class="add-list__color-palette"
-      :colors="$store.state.newList.popupColors"
-      :selectedColor="$store.state.newList.selectedColor"
-      @change="selectedColorChange"
+      :colors="popupColors"
+      :selectedColor="currentColor"
+      @change="currentColor = $event"
     />
     <div
       class="add-list__popup-btn btn-default"
-      @click="createList"
+      @click="createTodoList"
     >
       Create
     </div>
@@ -37,27 +37,33 @@ import ColorPalette from '@/components/ColorPalette'
 export default {
   components: {ColorPalette},
 
+  props: {
+    popupColors: Array,
+    popupDefaultColor: String,
+  },
+
+
   data() {
     return {
-      
+      currentColor: '',
+      title: ''
     }
   },
 
 
+  created() {
+    this.currentColor = this.popupDefaultColor
+  },
+
+
   methods: {
-    selectedColorChange(color) {
-      this.$store.commit('newList/SET_STATE', {key: 'selectedColor', value: color})
-    },
-
-    titleInput(e) {
-      this.$store.commit('newList/SET_STATE', {key: 'title', value: e.target.value})
-    },
-
-    createList() {
-      this.$store.dispatch('createList', {
-        title: this.$store.state.newList.title,
-        color: this.$store.state.newList.selectedColor,
+    createTodoList() {
+      if (!this.title) return
+      this.$store.dispatch('createTodoList', {
+        title: this.title,
+        color: this.currentColor,
       })
+      this.$emit('close')
     }
   },
 }

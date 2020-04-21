@@ -19,17 +19,26 @@
       />
     </div>
     
-    <span class="todo-item__text" v-if="!todo.editing">{{ todo.title }}</span>
-    <input type="text" class="todo-item__edit-input input-default" v-model="newTitle" @click.stop v-if="todo.editing">
+    <span class="todo-item__text" v-if="!isEditing">{{ todo.title }}</span>
+    <input 
+      type="text" 
+      class="todo-item__edit-input input-default" 
+      v-model="newTitle" 
+      @click.stop 
+      ref="edit-input"
+      v-if="isEditing"
+      @keypress.enter="saveButtonClick"
+    >
 
     <div 
       class="todo-item__manage-block" 
       @click.stop
     >
-      <template v-if="!todo.editing">
+      <template v-if="!isEditing">
         <SvgIcon 
           type="edit"
           color="#0000004f"
+          hoverColor="black"
           class="todo-item__manage-icon" 
           @click.native="editIconClick"
         />
@@ -37,6 +46,7 @@
         <SvgIcon 
           type="close"
           color="#0000004f"
+          hoverColor="black"
           class="todo-item__manage-icon" 
           @click.native="deleteIconClick"
         />
@@ -64,13 +74,13 @@ export default {
 
   data() {
     return {
-      newTitle: null
+      newTitle: null,
+      isEditing: false
     }
   },
 
 
   created() {
-    console.log(this.todo.title)
     this.newTitle = this.todo.title
   },
 
@@ -80,8 +90,10 @@ export default {
       this.updateTodoItem({completed: !this.todo.completed})
     },
 
-    editIconClick() {
-      this.updateTodoItem({editing: true})
+    async editIconClick() {
+      this.isEditing = true
+      await this.$nextTick()
+      this.$refs['edit-input'].focus()
     },
 
     deleteIconClick() {
@@ -92,12 +104,13 @@ export default {
     },
 
     saveButtonClick() {
-      this.updateTodoItem({editing: false, title: this.newTitle})
+      this.isEditing = false
+      this.updateTodoItem({title: this.newTitle})
     },
 
     closeButtonClick() {
-      this.newTitle = this.todo.title; 
-      this.updateTodoItem({editing: false})
+      this.newTitle = this.todo.title
+      this.isEditing = false
     },
 
     updateTodoItem(obj) {
@@ -134,6 +147,9 @@ export default {
         .todo-item__checkbox {
           background: #F2F2F2;
         }
+        .todo-item__svg {
+          opacity: 1;
+        }
       }
     }
 
@@ -146,11 +162,6 @@ export default {
       justify-content: center;
       align-items: center;
       transition: .1s;
-      &_hover {
-        &:hover {
-          background: #F2F2F2;
-        }
-      }
 
       &_completed {
         background: #4DD599;
@@ -161,6 +172,9 @@ export default {
 
       &_active {
         border: 2px solid #E8E8E8;
+        .todo-item__svg {
+          opacity: 0;
+        }
       }
     }
 
@@ -172,6 +186,7 @@ export default {
     &__svg {
       width: 15px;
       height: 20px;
+      transition: .1s;
     }
 
     &__manage-block {
@@ -189,7 +204,8 @@ export default {
       align-items: center;
       width: 15px;
       height: 100%;
-      margin-left: 15px;
+      padding: 0 7.5px;
+      box-sizing: content-box;
     }
 
     &__manage-btn {

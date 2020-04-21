@@ -33,6 +33,7 @@ export default {
       background-color: white;
       width: 75%;
       padding: 60px;
+      overflow: auto;
     }
   }
 </style>

@@ -65,7 +65,6 @@ export default {
   .app {
     &__left-container {
       width: 25%;
-      height: 100%;
       padding: 60px 20px;
       background: rgb(244,246,248);
       z-index: 1;
@@ -75,6 +74,8 @@ export default {
   .todo-list {
     &__group {
       margin-bottom: 40px;
+      max-height: 50%;
+      overflow: auto;
     }
   }
 

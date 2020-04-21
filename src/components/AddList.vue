@@ -2,7 +2,7 @@
   <div class="add-list">
     <div 
       class="btn-default btn-default_has_icon add-list__btn"
-      @click="popupIsVisible = !popupIsVisible"  
+      @click="addListButtonClick"  
     >
         <svg 
           class="btn-default__left-icon plus-icon"
@@ -16,7 +16,10 @@
     <transition name="fade">
       <addListPopup 
         v-if="popupIsVisible"
-        @close="popupIsVisible = false"  
+        @close="popupIsVisible = false" 
+        :popupColors="popupColors"
+        :popupDefaultColor="popupDefaultColor"
+        ref="popup" 
       />
     </transition>
   </div>
@@ -30,11 +33,22 @@ export default {
 
   data() {
     return {
-      popupIsVisible: false
+      popupIsVisible: false,
+      popupColors: ['#B6E6BD', '#FFBBCC', '#42B883', '#FF6464', '#C355F5', '#64C4ED'],
+      popupDefaultColor: '#B6E6BD'
     }
   },
 
 
+  methods: {
+    async addListButtonClick() {
+      this.popupIsVisible = !this.popupIsVisible
+      if (this.popupIsVisible) {
+        await this.$nextTick()
+        this.$refs.popup.$refs['title-input'].focus()
+      }
+    }
+  },
 }
 </script>
 

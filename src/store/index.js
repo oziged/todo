@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import newList from './modules/newList'
 
 Vue.use(Vuex)
 
@@ -21,6 +20,11 @@ export default new Vuex.Store({
             title: 'Find job',
             editing: false,
             completed: false
+          },
+          {
+            id: 1,
+            title: 'Find food',
+            completed: false
           }
         ]
       },
@@ -33,7 +37,6 @@ export default new Vuex.Store({
           {
             id: 1,
             title: 'Find money',
-            editing: false,
             completed: false
           }
         ]
@@ -47,8 +50,23 @@ export default new Vuex.Store({
       state[payload.key] = payload.value
     },
 
-    CREATE_LIST(state, list) {
+    CREATE_TODO_LIST(state, list) {
       state.todoLists.push(list)
+    },
+
+    UPDATE_TODO_LIST(state, payload) {
+      let todoListIndex = state.todoLists.findIndex(list => list.id == payload.listId)
+      Vue.set(state.todoLists, todoListIndex, {...state.todoLists[todoListIndex], ...payload.updateObj})
+    },
+
+    DELETE_TODO_LIST(state, id) {
+      let todoListIndex = state.todoLists.findIndex(list => list.id == id)
+      state.todoLists.splice(id, 1)
+    },
+
+    CREATE_TODO_ITEM(state, payload) {
+      let todoList = state.todoLists.find(list => list.id == payload.listId).todos
+      todoList.push(payload.item)
     },
 
     UPDATE_TODO_ITEM(state, payload) {
@@ -70,7 +88,40 @@ export default new Vuex.Store({
       if (state.mode === 'all') commit('SET_STATE', {key: 'mode', value: 'one'})
       commit('SET_STATE', {key: 'activeListId', value: payload.value})
     },
-    
+
+    createTodoList({ commit, state }, payload) {
+      let list = {
+        title: payload.title,
+        color: payload.color,
+        id: state.todoLists.length,
+        todos: []
+      }
+      
+      commit('CREATE_TODO_LIST', list)
+      commit('SET_STATE', {key: 'activeListId', value: list.id})
+      commit('SET_STATE', {key: 'mode', value: 'one'})
+      return list.id
+    },
+
+    updateTodoList({ commit }, payload) {
+      commit('UPDATE_TODO_LIST', payload)
+    },
+
+    deleteTodoList({ commit }, payload) {
+      commit('DELETE_TODO_LIST', payload.id)
+      commit('SET_STATE', {key: 'mode', value: 'all'})
+    },
+
+    createTodoItem({ commit }, payload) {
+      let item = {
+        id: +new Date(),
+        title: payload.title,
+        completed: false
+      }
+
+      commit('CREATE_TODO_ITEM', {listId: payload.listId, item})
+    },
+
     updateTodoItem({ commit }, payload) {
       commit('UPDATE_TODO_ITEM', payload)
     },
@@ -78,22 +129,9 @@ export default new Vuex.Store({
     deleteTodoItem({ commit }, payload) {
       commit("DELETE_TODO_ITEM", payload)
     },
-
-    createList({ commit, state }, payload) {
-      let list = {
-        title: payload.title,
-        color: payload.color,
-        id: state.todoLists.length,
-        todos: []
-      }
-
-      commit('CREATE_LIST', list)
-    }
-
   },
 
 
   modules: {
-    newList
   }
 })
