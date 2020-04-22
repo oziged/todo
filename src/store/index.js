@@ -17,13 +17,17 @@ export default new Vuex.Store({
         todos: [
           {
             id: 0,
-            title: 'Find job',
-            editing: false,
-            completed: false
+            title: 'Learn Javascript',
+            completed: true
           },
           {
             id: 1,
-            title: 'Find food',
+            title: 'Learn Vue.js',
+            completed: true
+          },
+          {
+            id: 2,
+            title: 'Learn React.js',
             completed: false
           }
         ]
@@ -36,7 +40,12 @@ export default new Vuex.Store({
         todos: [
           {
             id: 1,
-            title: 'Find money',
+            title: 'Learn Node.js',
+            completed: false
+          },
+          {
+            id: 2,
+            title: 'Learn Express.js',
             completed: false
           }
         ]
